@@ -8,11 +8,6 @@ import HomeScreen from './screens/Home.screen';
 import ProfileScreen from './screens/Profile.screen';
 import RoomScreen from './screens/Room.screen';
 
-// screen names
-const homeName = 'Home';
-const profileName = 'Profile';
-const roomName = 'Room';
-
 const Tab = createBottomTabNavigator();
 
 const styles = StyleSheet.create({
@@ -30,32 +25,32 @@ const styles = StyleSheet.create({
 
 const MainContainer = () => {
     return (
-        <NavigationContainer>
-            <Tab.Navigator styles={styles.layout} initialRouteName={homeName} screenOptions={({ route }) => ({
-                tabBarActiveTintColor: '#ffffff',
-                tabBarInactiveTintColor: '#ffffff',
-                tabBarActiveBackgroundColor: '#222222',
-                tabBarLabelStyle: { marginBottom: 10, fontSize: 12 },
-                tabBarStyle: { backgroundColor: '#141414', marginBottom: -20, height: 90 },
-                tabBarIcon: ({ focused, color, size }) => {
-                    let iconName;
-                    let rn = route.name;
-                    if (rn === homeName)
-                        iconName = focused ? 'home' : 'home-outline'
-                    else if (rn === roomName)
-                        iconName = focused ? 'list-circle' : 'list-circle-outline'
-                    else if (rn == profileName)
-                        iconName = focused ? 'person' : 'person-outline'
-                    return <Ionicons name={iconName} size={size} color={color}></Ionicons>
-                }
-            })}>
+        <Tab.Navigator styles={styles.layout} initialRouteName={'Home'} screenOptions={({ route }) => ({
+            headerShown: false,
+            tabBarActiveTintColor: '#ffffff',
+            tabBarLabelPosition: "beside-icon",
+            tabBarInactiveTintColor: '#ffffff',
+            tabBarActiveBackgroundColor: '#222222',
+            tabBarLabelStyle: { fontSize: 12 },
+            tabBarStyle: { backgroundColor: '#141414', height: 90 },
+            tabBarIcon: ({ focused, color, size }) => {
+                let iconName;
+                let rn = route.name;
+                if (rn === 'Home')
+                    iconName = focused ? 'home' : 'home-outline'
+                else if (rn === 'Rooms')
+                    iconName = focused ? 'list-circle' : 'list-circle-outline'
+                else if (rn == 'Profile')
+                    iconName = focused ? 'person' : 'person-outline'
+                return <Ionicons name={iconName} size={size} color={color}></Ionicons>
+            }
+        })}>
 
-                <Tab.Screen name={homeName} component={HomeScreen}></Tab.Screen>
-                <Tab.Screen name={roomName} component={RoomScreen}></Tab.Screen>
-                <Tab.Screen name={profileName} component={ProfileScreen}></Tab.Screen>
+            <Tab.Screen name='Home' component={HomeScreen}></Tab.Screen>
+            <Tab.Screen name='Rooms' component={RoomScreen}></Tab.Screen>
+            <Tab.Screen name='Profile' component={ProfileScreen}></Tab.Screen>
 
-            </Tab.Navigator>
-        </NavigationContainer>
+        </Tab.Navigator>
     );
 };
 
