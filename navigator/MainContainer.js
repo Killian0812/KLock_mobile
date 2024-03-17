@@ -1,12 +1,11 @@
 import { StyleSheet, Text, SafeAreaView } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // screens
-import HomeScreen from './screens/Home.screen';
-import ProfileScreen from './screens/Profile.screen';
-import RoomScreen from './screens/Room.screen';
+import HomeScreen from '../screens/Home.screen';
+import ProfileScreen from '../screens/Profile.screen';
+import RoomScreen from '../screens/Room.screen';
 
 const Tab = createBottomTabNavigator();
 

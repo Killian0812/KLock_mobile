@@ -1,11 +1,13 @@
-import { useRef, useState, useEffect } from 'react';
-import { TouchableOpacity, TextInput, Text, View, StyleSheet } from 'react-native';
+import { useState, useEffect } from 'react';
+import { TouchableOpacity, TextInput, Text, View, StyleSheet, ScrollView } from 'react-native';
 import { Formik } from 'formik';
 import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
+import useAuth from '../hooks/useAuth';
 
 export default function LoginScreen({ navigation }) {
 
-    const errRef = useRef();
+    const { setAuth } = useAuth();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -24,34 +26,43 @@ export default function LoginScreen({ navigation }) {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });
-            console.log(response.data);
+            console.log(response?.data);
+            const accessToken = response?.data?.accessToken;
+            const refreshToken = response?.data?.refreshToken;
+            const roles = response?.data?.roles;
+            setAuth({ username, accessToken, roles });
             setUsername('');
             setPassword('');
+            await SecureStore.setItemAsync("REFRESH_TOKEN", refreshToken);
             navigation.navigate('Main', { screen: 'Home' }); // navigate to a screen in a nested navigator
         } catch (error) {
             if (!error?.response) {
                 setErrMsg('No Server Response');
+                alert('No Server Response')
                 console.log(error);
             } else if (error.response?.status === 400) {
                 console.log(error.response.data);
+                alert(error.response.data);
                 setErrMsg(error.response.data);
             } else if (error.response?.status === 401) {
+                console.log(error.response.data);
                 setErrMsg('Unauthorized');
+                alert('Unauthorized');
             } else {
-                setErrMsg('Login Failed')
+                console.log(error.response.data);
+                setErrMsg('Login Failed');
+                alert('Login Failed');
             }
         }
     }
 
     return (
         <View style={styles.layout}>
-            <View style={styles.loginSection}>
+            <ScrollView contentContainerStyle={styles.loginSection}>
                 <View style={styles.header}>
                     <Text style={styles.title}>Login</Text>
                 </View>
-                <Formik
-                    initialValues={{ email: '' }}
-                    onSubmit={values => console.log(values)}>
+                <Formik initialValues={{ username: '', password: '' }}>
                     {() => (
                         <>
                             <View style={styles.username}>
@@ -77,7 +88,7 @@ export default function LoginScreen({ navigation }) {
                     <Text style={[styles.label, { marginTop: 30, textDecorationLine: "underline" }]}
                         onPress={() => navigation.navigate('Register')}>Sign Up</Text>
                 </View>
-            </View>
+            </ScrollView>
         </View >
     );
 }
@@ -97,7 +108,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#141414",
         justifyContent: "center",
         alignItems: "center",
-        position: "absolute"
+        top: 200
     },
     header: {
         position: "absolute",
