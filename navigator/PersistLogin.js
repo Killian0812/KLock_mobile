@@ -1,39 +1,38 @@
 import useAuth from '../hooks/useAuth';
 import { useEffect } from 'react';
 import SplashScreen from '../screens/Splash.screen';
-import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+
+import useRefreshToken from '../hooks/useRefreshToken';
+import useNotification from '../hooks/useNotification';
 
 export default function PersistLogin({ navigation }) {
 
-    const { auth, setAuth } = useAuth();
+    const { auth } = useAuth();
+    const refresh = useRefreshToken();
+    // axios with jwt verification
+    const axiosPrivate = useAxiosPrivate();
+
+    // get app expo push notification token
+    const { expoPushToken } = useNotification();
 
     useEffect(() => {
         const tryAutoLogin = async () => {
             console.log("Trying auto-login");
-            if (auth?.accessToken) {
+            if (auth?.accessToken) { // if authenticated
+                // set expoPushToken to user 
+                // => when there is new entry, send notification to all manager
+                console.log("Expo PT: " + expoPushToken);
+
+                axiosPrivate.post(`/home/updateExpoPushToken/${auth?.username}`, { expoPushToken: expoPushToken })
+                    .then(() => { console.log("Updated expo push token") }).catch(e => console.log(e));
+
                 navigation.navigate('Main');
             } else {
-                const jwt = await SecureStore.getItemAsync("REFRESH_TOKEN");
-                if (!jwt) {
+                const accessToken = await refresh();
+                console.log(accessToken);
+                if (accessToken === "FAILED")
                     navigation.navigate('Login');
-                    return;
-                }
-                const cookies = `jwt=${jwt};`;
-                const instance = axios.create({
-                    baseURL: 'http://192.168.1.10:8080',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Cookie': cookies
-                    }
-                });
-                const res = await instance.get("/refresh");
-                // console.log(res?.data);
-                if (!res?.status == 401 || !res?.data) {
-                    navigation.navigate('Login');
-                } else {
-                    setAuth({ username: res.data.username, accessToken: res.data.accessToken });
-                }
             }
         }
 

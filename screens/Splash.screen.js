@@ -14,15 +14,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: '#c4c4c4',
     },
     logo: {
-        width: 200,
-        height: 200,
-        resizeMode: 'contain',
+        width: 500,
+        height: 500,
     },
     text: {
-        marginTop: 20,
         fontSize: 18,
         fontWeight: 'bold',
     },

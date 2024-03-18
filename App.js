@@ -1,8 +1,11 @@
+import { useEffect, useState } from 'react';
+import { Text, View, Button } from 'react-native';
 import { useFonts } from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { AuthProvider } from "./context/AuthProvider";
+import { NotificationProvider } from './context/NotificationProvider';
 import MainContainer from './navigator/MainContainer';
 import PersistLogin from './navigator/PersistLogin';
 
@@ -10,9 +13,11 @@ import LoginScreen from "./screens/Login.screen";
 import RegisterScreen from "./screens/Register.screen";
 import SplashScreen from "./screens/Splash.screen";
 
+
 const Stack = createStackNavigator();
 
 function App() {
+
   const [fontsLoaded] = useFonts({
     "Quicksand-Regular": require("./assets/fonts/Quicksand-Regular.ttf"),
     "Quicksand-Bold": require("./assets/fonts/Quicksand-Bold.ttf"),
@@ -24,19 +29,27 @@ function App() {
     )
   } else {
     return (
-      <AuthProvider>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName={'PersistLogin'} screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="PersistLogin" component={PersistLogin} />
+      <NotificationProvider>
 
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
+        <AuthProvider>
 
-            {/* disable gesture to prevent slide back to login */}
-            <Stack.Screen name="Main" component={MainContainer} options={{ gestureEnabled: false }} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </AuthProvider>
+          <NavigationContainer>
+
+            <Stack.Navigator initialRouteName={'PersistLogin'} screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="PersistLogin" component={PersistLogin} />
+
+              <Stack.Screen name="Login" component={LoginScreen} options={{ gestureEnabled: false }} />
+              <Stack.Screen name="Register" component={RegisterScreen} />
+
+              {/* disable gesture to prevent slide back to login */}
+              <Stack.Screen name="Main" component={MainContainer} options={{ gestureEnabled: false }} />
+            </Stack.Navigator>
+
+          </NavigationContainer>
+
+        </AuthProvider>
+
+      </NotificationProvider>
     );
   }
 }

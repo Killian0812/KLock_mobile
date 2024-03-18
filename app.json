@@ -18,13 +18,15 @@
       "supportsTablet": true,
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "bundleIdentifier": "com.killian0812.klock-mobile"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile": "./google-services.json",
       "package": "com.anonymous.KLock_mobile"
     },
     "web": {
@@ -37,6 +39,11 @@
           "faceIDPermission": "Allow KLock Mobile to access your Face ID biometric data."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "49d7901f-964f-4801-b632-38ed6fadbff2"
+      }
+    }
   }
 }

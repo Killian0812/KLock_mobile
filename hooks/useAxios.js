@@ -3,10 +3,10 @@ import axios from "axios";
 
 // const accessToken = SecureStore.getItem("ACCESS_TOKEN");
 
-const privateAxios = axios.create({
+const axiosPrivate = axios.create({
     baseURL: 'http://192.168.1.10:8080/',
     // headers: { 'Authorization': `Bearer ${accessToken}` }
 });
 
-export default privateAxios;
+export default axiosPrivate;
 
