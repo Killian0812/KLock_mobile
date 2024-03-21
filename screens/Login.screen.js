@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { TouchableOpacity, TextInput, Text, View, StyleSheet, ScrollView } from 'react-native';
 import { Formik } from 'formik';
-import axios from 'axios';
+import axiosPrivate from '../hooks/useAxios';
 import * as SecureStore from 'expo-secure-store';
 import useAuth from '../hooks/useAuth';
 
@@ -22,7 +22,7 @@ export default function LoginScreen({ navigation }) {
         console.log(username);
         console.log(password);
         try {
-            const response = await axios.post("http://192.168.1.10:8080/login", JSON.stringify({ username, password }), {
+            const response = await axiosPrivate.post("/login", JSON.stringify({ username, password }), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });

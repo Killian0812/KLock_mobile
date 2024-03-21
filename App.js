@@ -12,6 +12,7 @@ import PersistLogin from './navigator/PersistLogin';
 import LoginScreen from "./screens/Login.screen";
 import RegisterScreen from "./screens/Register.screen";
 import SplashScreen from "./screens/Splash.screen";
+import Authenticate from './navigator/Authenticate';
 
 
 const Stack = createStackNavigator();
@@ -37,6 +38,7 @@ function App() {
 
             <Stack.Navigator initialRouteName={'PersistLogin'} screenOptions={{ headerShown: false }}>
               <Stack.Screen name="PersistLogin" component={PersistLogin} />
+              <Stack.Screen name="Authenticate" component={Authenticate} />
 
               <Stack.Screen name="Login" component={LoginScreen} options={{ gestureEnabled: false }} />
               <Stack.Screen name="Register" component={RegisterScreen} />

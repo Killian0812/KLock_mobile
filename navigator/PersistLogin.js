@@ -1,5 +1,5 @@
 import useAuth from '../hooks/useAuth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import SplashScreen from '../screens/Splash.screen';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
@@ -17,26 +17,32 @@ export default function PersistLogin({ navigation }) {
     const { expoPushToken } = useNotification();
 
     useEffect(() => {
-        const tryAutoLogin = async () => {
-            console.log("Trying auto-login");
-            if (auth?.accessToken) { // if authenticated
-                // set expoPushToken to user 
-                // => when there is new entry, send notification to all manager
-                console.log("Expo PT: " + expoPushToken);
 
-                axiosPrivate.post(`/home/updateExpoPushToken/${auth?.username}`, { expoPushToken: expoPushToken })
-                    .then(() => { console.log("Updated expo push token") }).catch(e => console.log(e));
-
-                navigation.navigate('Main');
-            } else {
-                const accessToken = await refresh();
-                console.log(accessToken);
-                if (accessToken === "FAILED")
-                    navigation.navigate('Login');
+        const verifyRefreshToken = async () => {
+            try {
+                await refresh();
+            } catch (error) {
+                console.log(error);
+            } finally {
+                navigation.navigate('Authenticate');
             }
         }
 
-        tryAutoLogin();
+        console.log("Trying auto-login");
+        if (!auth?.accessToken) {
+            verifyRefreshToken();
+        } else {
+            // if authenticated save expoPushToken to user in db 
+            // => when there is a new entry, send a notification to all managers
+            console.log("Expo PT: " + expoPushToken);
+
+            axiosPrivate.post(`/home/updateExpoPushToken/${auth?.username}`, { expoPushToken: expoPushToken })
+                .then(() => { console.log("Updated expo push token") })
+                .catch(e => console.log(e));
+                
+            navigation.navigate('Main');
+        }
+
     }, [auth]);
 
     return (
