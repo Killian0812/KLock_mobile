@@ -2,7 +2,7 @@ import { Text, View, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     layout: {
-        flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: "grey"
+        flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: "#969696"
     }
 });
 

@@ -25,7 +25,11 @@ const styles = StyleSheet.create({
 const MainContainer = () => {
     return (
         <Tab.Navigator styles={styles.layout} initialRouteName={'Home'} screenOptions={({ route }) => ({
-            headerShown: false,
+            headerStyle: {
+                backgroundColor: '#424242',
+            },
+            headerShadowVisible: false,
+            headerTintColor: '#fff',
             tabBarActiveTintColor: '#ffffff',
             tabBarLabelPosition: "beside-icon",
             tabBarInactiveTintColor: '#ffffff',
@@ -47,7 +51,7 @@ const MainContainer = () => {
 
             <Tab.Screen name='Home' component={HomeScreen}></Tab.Screen>
             <Tab.Screen name='Rooms' component={RoomScreen}></Tab.Screen>
-            <Tab.Screen name='Profile' component={ProfileScreen}></Tab.Screen>
+            <Tab.Screen name='Profile' component={ProfileScreen} ></Tab.Screen>
 
         </Tab.Navigator>
     );
