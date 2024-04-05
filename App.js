@@ -4,6 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { AuthProvider } from "./context/AuthProvider";
 import { NotificationProvider } from './context/NotificationProvider';
+import { FirebaseProvider } from "./context/FirebaseProvider";
+
 import MainContainer from './navigator/MainContainer';
 import PersistLogin from './navigator/PersistLogin';
 
@@ -28,28 +30,33 @@ function App() {
     )
   } else {
     return (
-      <NotificationProvider>
 
-        <AuthProvider>
+      <FirebaseProvider>
 
-          <NavigationContainer>
+        <NotificationProvider>
 
-            <Stack.Navigator initialRouteName={'PersistLogin'} screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="PersistLogin" component={PersistLogin} />
-              <Stack.Screen name="Authenticate" component={Authenticate} />
+          <AuthProvider>
 
-              <Stack.Screen name="Login" component={LoginScreen} options={{ gestureEnabled: false }} />
-              <Stack.Screen name="Register" component={RegisterScreen} />
+            <NavigationContainer>
 
-              {/* disable gesture to prevent slide back to login */}
-              <Stack.Screen name="Main" component={MainContainer} options={{ gestureEnabled: false }} />
-            </Stack.Navigator>
+              <Stack.Navigator initialRouteName={'PersistLogin'} screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="PersistLogin" component={PersistLogin} />
+                <Stack.Screen name="Authenticate" component={Authenticate} />
 
-          </NavigationContainer>
+                <Stack.Screen name="Login" component={LoginScreen} options={{ gestureEnabled: false }} />
+                <Stack.Screen name="Register" component={RegisterScreen} />
 
-        </AuthProvider>
+                {/* disable gesture to prevent slide back to login */}
+                <Stack.Screen name="Main" component={MainContainer} options={{ gestureEnabled: false }} />
+              </Stack.Navigator>
 
-      </NotificationProvider>
+            </NavigationContainer>
+
+          </AuthProvider>
+
+        </NotificationProvider>
+
+      </FirebaseProvider>
     );
   }
 }

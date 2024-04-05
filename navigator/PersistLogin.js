@@ -2,7 +2,6 @@ import useAuth from '../hooks/useAuth';
 import { useEffect, useState } from 'react';
 import SplashScreen from '../screens/Splash.screen';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-
 import useRefreshToken from '../hooks/useRefreshToken';
 import useNotification from '../hooks/useNotification';
 

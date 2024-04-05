@@ -1,46 +1,84 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions, FlatList, Image } from 'react-native';
 import AdIcons from 'react-native-vector-icons/AntDesign';
+import { ref, getDownloadURL } from 'firebase/storage';
+
+import useAuth from '../hooks/useAuth';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import useFirebase from '../hooks/useFirebase';
+import { formatDate } from '../tools/date.formatter';
 
 const screenWidth = Dimensions.get('window').width;
 
-const DATA = [
-    {
-        id: 1,
-        title: 'First Item',
-        description: 'First Desciption',
-    },
-    {
-        id: 2,
-        title: 'Second Item',
-        description: 'Second Desciption',
-    },
-    {
-        id: 3,
-        title: 'Third Item',
-        description: 'Third Desciption',
-    },
-];
-const Item = ({ item }) => (
-    <View style={styles.row}>
-        <Text style={styles.cell}>{item.id}</Text>
-        <Text style={styles.cell}>{item.title}</Text>
-        <Text style={styles.cell}>{item.description}</Text>
-    </View>
-);
+const Item = ({ item, storage }) => {
+
+    const [imageUrl, setImageUrl] = useState(null);
+
+    useEffect(() => {
+        const fetchImageUrl = async () => {
+            try {
+                const url = await getDownloadURL(ref(storage, item.image));
+                setImageUrl(url);
+            } catch (error) {
+                console.error('Error fetching image URL:', error);
+            }
+        };
+        fetchImageUrl();
+
+        // Cleanup function
+        return () => {
+            setImageUrl(null); // Clear the image URL when component unmounts
+        };
+    }, [item.image, storage]);
+
+    return (
+        <View style={styles.row}>
+            <Image source={{
+                uri: imageUrl,
+            }} style={{ width: 70, height: 70, marginRight: 20 }} />
+            <Text style={styles.cell}>{item.name}</Text>
+            <Text style={styles.cell}>{formatDate(item.createdAt)}</Text>
+        </View>
+    );
+}
+
 
 const RoomScreen = () => {
+    const [rooms, setRooms] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState(null);
+    const [data, setData] = useState([]);
+    const { auth } = useAuth();
+    const axiosPrivate = useAxiosPrivate();
+    const { storage } = useFirebase();
+
+    // fetch rooms
+    useEffect(() => {
+        axiosPrivate.get(`/home/rooms?username=${auth.username}`).then((res) => {
+            console.log(res.data);
+            setRooms(res.data);
+        })
+    }, [auth, axiosPrivate]);
+
 
     const handleRoomPress = (room) => {
         if (selectedRoom === room) {
+            setData(null);
             setSelectedRoom(null);
             return;
         }
+
+        // fetch room entries
+        async function fetchRoomEntries() {
+            const allEntries = await axiosPrivate.get(`/home/roomEntries?mac=${room.mac}`);
+            setData(allEntries.data.reverse());
+        }
+        fetchRoomEntries();
+
         setSelectedRoom(room);
     };
 
     const handleClose = () => {
+        setData(null);
         setSelectedRoom(null);
     }
 
@@ -54,9 +92,9 @@ const RoomScreen = () => {
                 scrollEventThrottle={16}
             >
 
-                {ROOMS.map((room) => (
+                {rooms.map((room) => (
                     <TouchableOpacity
-                        key={room.id}
+                        key={room._id}
                         style={[
                             styles.roomButton,
                             selectedRoom === room ? styles.selectedRoom : null,
@@ -80,9 +118,9 @@ const RoomScreen = () => {
                         </View>
                         <View></View>
                         <FlatList style={styles.roomInfo}
-                            data={DATA}
-                            renderItem={({ item }) => <Item item={item} />}
-                            keyExtractor={item => item.id}
+                            data={data}
+                            renderItem={({ item }) => <Item item={item} storage={storage} />}
+                            keyExtractor={item => item._id}
                         />
                     </>
                 )}
@@ -90,13 +128,6 @@ const RoomScreen = () => {
         </View>
     );
 };
-
-const ROOMS = [
-    { id: 1, name: 'Room 1', info: 'Information about Room 1' },
-    { id: 2, name: 'Room 2', info: 'Information about Room 2' },
-    { id: 3, name: 'Room 3', info: 'Information about Room 3' },
-    { id: 4, name: 'Room 4', info: 'Information about Room 4' },
-];
 
 const styles = StyleSheet.create({
     container: {
