@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions, FlatList, Image } from 'react-native';
+import {
+    View, Text, TouchableOpacity, ScrollView,
+    StyleSheet, Dimensions, FlatList, Image, Modal
+} from 'react-native';
 import AdIcons from 'react-native-vector-icons/AntDesign';
 import { ref, getDownloadURL } from 'firebase/storage';
 
@@ -13,6 +16,7 @@ const screenWidth = Dimensions.get('window').width;
 const Item = ({ item, storage }) => {
 
     const [imageUrl, setImageUrl] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchImageUrl = async () => {
@@ -31,17 +35,38 @@ const Item = ({ item, storage }) => {
         };
     }, [item.image, storage]);
 
+    const handleImageClick = () => {
+        setModalVisible(true);
+    };
+
     return (
-        <View style={styles.row}>
-            <Image source={{
-                uri: imageUrl,
-            }} style={{ width: 70, height: 70, marginRight: 20 }} />
-            <Text style={styles.cell}>{item.name}</Text>
-            <Text style={styles.cell}>{formatDate(item.createdAt)}</Text>
-        </View>
+        <>
+            <View style={styles.row}>
+                <TouchableOpacity onPress={handleImageClick}>
+                    <Image source={{ uri: imageUrl }} style={{ width: 70, height: 70, marginRight: 20 }} />
+                </TouchableOpacity>
+                <Text style={styles.cell}>{item.name}</Text>
+                <Text style={styles.cell}>{formatDate(item.createdAt)}</Text>
+            </View>
+
+            {/* Image Preview */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}>
+                <View style={styles.imagePrevewContainer}>
+                    <Image source={{ uri: imageUrl }} style={styles.imagePreview} />
+                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                        <Text style={styles.closeButtonText}>Close</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
+        </>
     );
 }
-
 
 const RoomScreen = () => {
     const [rooms, setRooms] = useState([]);
@@ -212,7 +237,29 @@ const styles = StyleSheet.create({
         fontSize: 15,
         textAlign: 'left',
         flex: 1
-    }
+    },
+    imagePrevewContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    imagePreview: {
+        width: '80%',
+        height: '80%',
+        resizeMode: 'contain',
+    },
+    closeButton: {
+        position: 'absolute',
+        bottom: 150,
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 5,
+    },
+    closeButtonText: {
+        color: 'black',
+        fontWeight: 'bold',
+    },
 });
 
 export default RoomScreen;

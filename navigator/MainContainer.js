@@ -2,6 +2,8 @@ import { StyleSheet, Text, SafeAreaView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+import useListenEvent from '../hooks/useListenEvent';
+
 // screens
 import HomeScreen from '../screens/Home.screen';
 import ProfileScreen from '../screens/Profile.screen';
@@ -23,6 +25,9 @@ const styles = StyleSheet.create({
 });
 
 const MainContainer = () => {
+
+    useListenEvent();
+
     return (
         <Tab.Navigator styles={styles.layout} initialRouteName={'Home'} screenOptions={({ route }) => ({
             headerStyle: {

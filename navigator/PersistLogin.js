@@ -1,9 +1,9 @@
 import useAuth from '../hooks/useAuth';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import SplashScreen from '../screens/Splash.screen';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useRefreshToken from '../hooks/useRefreshToken';
-import useNotification from '../hooks/useNotification';
+import usePushNotification from '../hooks/usePushNotification';
 
 export default function PersistLogin({ navigation }) {
 
@@ -13,7 +13,7 @@ export default function PersistLogin({ navigation }) {
     const axiosPrivate = useAxiosPrivate();
 
     // get app expo push notification token
-    const { expoPushToken } = useNotification();
+    const { expoPushToken } = usePushNotification();
 
     useEffect(() => {
 
