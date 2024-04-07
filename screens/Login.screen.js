@@ -22,13 +22,13 @@ export default function LoginScreen({ navigation }) {
         console.log(username);
         console.log(password);
         try {
-            const response = await axiosPrivate.post("/login", JSON.stringify({ username, password }), {
+            const response = await axiosPrivate.post("/login/mobile", JSON.stringify({ username, password }), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });
-            console.log(response?.data);
+            const setCookieHeader = response?.headers["set-cookie"][0];
+            const refreshToken = setCookieHeader.substring(4, setCookieHeader.indexOf(';'));
             const accessToken = response?.data?.accessToken;
-            const refreshToken = response?.data?.refreshToken;
             const roles = response?.data?.roles;
             setAuth({ username, accessToken, roles });
             setUsername('');

@@ -52,7 +52,7 @@ function App() {
                   </Stack.Navigator>
 
                 </NavigationContainer>
-
+      
               </NotificationProvider>
             </SocketProvider>
           </AuthProvider>

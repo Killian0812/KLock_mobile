@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
 import { formatDate } from '../tools/date.formatter';
 import { getDownloadURL, ref } from "firebase/storage";
 import useAuth from '../hooks/useAuth';
@@ -11,6 +11,7 @@ function PendingRequest({ data, storage }) {
     const [imageUrl, setImageUrl] = useState(null);
     const [show, setShow] = useState(true);
     const axiosPrivate = useAxiosPrivate();
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchImageUrl = async () => {
@@ -42,33 +43,58 @@ function PendingRequest({ data, storage }) {
         setShow(false);
     }
 
+    const handleImageClick = () => {
+        setModalVisible(true);
+    };
+
     return (
-        !show ? <></> :
-            <View style={styles.requestContainer}>
-                <View style={styles.imageContainer}>
-                    <Image source={imageUrl ? { uri: imageUrl } : require('../assets/loadingFace.png')} style={styles.image} />
-                </View>
+        <>
 
-                <View style={styles.textContainer}>
-                    <Text style={styles.roomText}>Room: {data.room.name}</Text>
-                    <Text style={styles.timeText}>Time arrived: {formatDate(data.createdAt)}</Text>
-                </View>
+            {!show ? <></> :
+                <View style={styles.requestContainer}>
+                    <View style={styles.imageContainer}>
+                        <TouchableOpacity onPress={handleImageClick}>
+                            <Image source={imageUrl ? { uri: imageUrl } : require('../assets/loadingFace.png')} style={styles.image} />
+                        </TouchableOpacity>
+                    </View>
 
-                <View style={styles.buttonsContainer}>
-                    <TouchableOpacity
-                        style={[styles.button, styles.allowButton]}
-                        onPress={() => handleClick("Allow")}
-                    >
-                        <Text style={styles.buttonText}>Allow</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.button, styles.denyButton]}
-                        onPress={() => handleClick("Deny")}
-                    >
-                        <Text style={styles.buttonText}>Deny</Text>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.roomText}>Room: {data.room.name}</Text>
+                        <Text style={styles.timeText}>Time arrived: {formatDate(data.createdAt)}</Text>
+                    </View>
+
+                    <View style={styles.buttonsContainer}>
+                        <TouchableOpacity
+                            style={[styles.button, styles.allowButton]}
+                            onPress={() => handleClick("Allow")}
+                        >
+                            <Text style={styles.buttonText}>Allow</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.button, styles.denyButton]}
+                            onPress={() => handleClick("Deny")}
+                        >
+                            <Text style={styles.buttonText}>Deny</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            }
+            {/* Image Preview */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}>
+                <View style={styles.imagePrevewContainer}>
+                    <Image source={{ uri: imageUrl }} style={styles.imagePreview} />
+                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                        <Text style={styles.closeButtonText}>Close</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </Modal>
+        </>
     );
 
 }
@@ -77,6 +103,7 @@ function NewRequest({ data, storage }) {
     const [imageUrl, setImageUrl] = useState(null);
     const [show, setShow] = useState(true);
     const axiosPrivate = useAxiosPrivate();
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchImageUrl = async () => {
@@ -112,33 +139,58 @@ function NewRequest({ data, storage }) {
         }
     };
 
+    const handleImageClick = () => {
+        setModalVisible(true);
+    };
+
     return (
-        !show ? <></> :
-            <View style={styles.requestContainer}>
-                <View style={styles.imageContainer}>
-                    <Image source={imageUrl ? { uri: imageUrl } : require('../assets/loadingFace.png')} style={styles.image} />
-                </View>
+        <>
+            {!show ? <></> :
+                <View style={styles.requestContainer}>
+                    <View style={styles.imageContainer}>
+                        <TouchableOpacity onPress={handleImageClick}>
+                            <Image source={imageUrl ? { uri: imageUrl } : require('../assets/loadingFace.png')} style={styles.image} />
+                        </TouchableOpacity>
+                    </View>
 
-                <View style={styles.textContainer}>
-                    <Text style={styles.roomText}>Room: {data.room.name}</Text>
-                    <Text style={styles.timeText}>Time arrived: {formatDate(data.newRequest.createdAt)}</Text>
-                </View>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.roomText}>Room: {data.room.name}</Text>
+                        <Text style={styles.timeText}>Time arrived: {formatDate(data.newRequest.createdAt)}</Text>
+                    </View>
 
-                <View style={styles.buttonsContainer}>
-                    <TouchableOpacity
-                        style={[styles.button, styles.allowButton]}
-                        onPress={() => handleClick("Allow")}
-                    >
-                        <Text style={styles.buttonText}>Allow</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.button, styles.denyButton]}
-                        onPress={() => handleClick("Deny")}
-                    >
-                        <Text style={styles.buttonText}>Deny</Text>
+                    <View style={styles.buttonsContainer}>
+                        <TouchableOpacity
+                            style={[styles.button, styles.allowButton]}
+                            onPress={() => handleClick("Allow")}
+                        >
+                            <Text style={styles.buttonText}>Allow</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.button, styles.denyButton]}
+                            onPress={() => handleClick("Deny")}
+                        >
+                            <Text style={styles.buttonText}>Deny</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            }
+
+            {/* Image Preview */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(false);
+                }}>
+                <View style={styles.imagePrevewContainer}>
+                    <Image source={{ uri: imageUrl }} style={styles.imagePreview} />
+                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                        <Text style={styles.closeButtonText}>Close</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </Modal>
+        </>
     );
 }
 
@@ -283,5 +335,27 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: 'white',
+    },
+    imagePrevewContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    imagePreview: {
+        width: '80%',
+        height: '80%',
+        resizeMode: 'contain',
+    },
+    closeButton: {
+        position: 'absolute',
+        bottom: 150,
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 5,
+    },
+    closeButtonText: {
+        color: 'black',
+        fontWeight: 'bold',
     },
 });

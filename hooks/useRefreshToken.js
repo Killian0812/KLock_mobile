@@ -11,10 +11,10 @@ const useRefreshToken = () => {
         if (!jwt)
             return "NO JWT";
 
-        const cookies = `jwt=${jwt};`;
+        const cookies = `jwt=${jwt}; isMobile=true;`;
         const headers = {
             'Content-Type': 'application/json',
-            'Cookie': cookies
+            'Cookie': cookies,   
         }
         const response = await axiosPrivate.get("/refresh", {
             headers: headers,
