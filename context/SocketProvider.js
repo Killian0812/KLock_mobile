@@ -11,7 +11,7 @@ export const SocketProvider = ({ children }) => {
     useEffect(() => {
         if (auth?.username) {
             console.log(`Has auth: ${auth.username}`);
-            const newSocket = io("http://192.168.1.3:8080", {
+            const newSocket = io("http://192.168.1.11:8080", {
                 query: {
                     mobileUser: auth.username,
                 },

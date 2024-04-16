@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     heading: {
         flex: 1,
         fontSize: 15,
-        fontWeight: 'bold',
+        fontWeight: 'bold'
     },
     row: {
         flexDirection: "row",

@@ -23,6 +23,8 @@ const useRefreshToken = () => {
         if (response.status == 200) {
             setAuth({
                 username: response.data.username,
+                fullname: response.data.fullname,
+                email: response.data.email,
                 roles: response.data.roles,
                 accessToken: response.data.accessToken // replace old access token
             });

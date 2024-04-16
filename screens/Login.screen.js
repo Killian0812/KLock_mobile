@@ -30,7 +30,9 @@ export default function LoginScreen({ navigation }) {
             const refreshToken = setCookieHeader.substring(4, setCookieHeader.indexOf(';'));
             const accessToken = response?.data?.accessToken;
             const roles = response?.data?.roles;
-            setAuth({ username, accessToken, roles });
+            const fullname = response?.data?.fullname;
+            const email = response?.data?.email;
+            setAuth({ username, fullname, email, accessToken, roles });
             setUsername('');
             setPassword('');
             await SecureStore.setItemAsync("REFRESH_TOKEN", refreshToken);
