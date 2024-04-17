@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { TouchableOpacity, TextInput, Text, View, StyleSheet, ScrollView } from 'react-native';
 import { Formik } from 'formik';
 import axiosPrivate from '../hooks/useAxios';
@@ -12,12 +12,6 @@ export default function LoginScreen({ navigation }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const [errMsg, setErrMsg] = useState('');
-
-    useEffect(() => {
-        setErrMsg('');
-    }, [username, password])
-
     const handleSubmit = async function (e) {
         console.log(username);
         console.log(password);
@@ -27,7 +21,7 @@ export default function LoginScreen({ navigation }) {
                 withCredentials: true
             });
             const setCookieHeader = response?.headers["set-cookie"][0];
-            const refreshToken = setCookieHeader.substring(4, setCookieHeader.indexOf(';'));
+            const refreshToken = setCookieHeader.substring(4, setCookieHeader.indexOf(';')); // get refreshtoken since set-cookie doest work on mobile
             const accessToken = response?.data?.accessToken;
             const roles = response?.data?.roles;
             const fullname = response?.data?.fullname;
@@ -35,24 +29,20 @@ export default function LoginScreen({ navigation }) {
             setAuth({ username, fullname, email, accessToken, roles });
             setUsername('');
             setPassword('');
-            await SecureStore.setItemAsync("REFRESH_TOKEN", refreshToken);
+            await SecureStore.setItemAsync("REFRESH_TOKEN", refreshToken); // save it to SecureStore cause cant save it http-only cookie like browser
             navigation.navigate('Main', { screen: 'Home' }); // navigate to a screen in a nested navigator
         } catch (error) {
             if (!error?.response) {
-                setErrMsg('No Server Response');
                 alert('No Server Response')
                 console.log(error);
             } else if (error.response?.status === 400) {
                 console.log(error.response.data);
                 alert(error.response.data);
-                setErrMsg(error.response.data);
             } else if (error.response?.status === 401) {
                 console.log(error.response.data);
-                setErrMsg('Unauthorized');
                 alert('Unauthorized');
             } else {
                 console.log(error.response.data);
-                setErrMsg('Login Failed');
                 alert('Login Failed');
             }
         }

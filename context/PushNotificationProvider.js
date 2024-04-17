@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 
 import SplashScreen from "../screens/Splash.screen";
 
-Notifications.setNotificationHandler({
+Notifications.setNotificationHandler({ // notification recieved when opening app
     handleNotification: async () => ({
         shouldShowAlert: true,
         shouldPlaySound: false,
@@ -62,12 +62,14 @@ export const PushNotificationProvider = ({ children }) => {
             setPushTokenAvailable(true);
         });
 
-        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        // notifications recieved when opening app
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => { 
             setNotification(notification);
         });
 
+        // notifications recieved when clicked on notification
         responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log(response);
+            console.log("Clicked on notification", response);
         });
 
         return () => {

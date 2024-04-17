@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import axiosPrivate from "../../hooks/useAxios";
-import useAuth from "../../hooks/useAuth";
 
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&/~._-]{6,24}$/;
 
 const ChangePasswordTab = () => {
-    const { auth } = useAuth();
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [matchPassword, setMatchPassword] = useState("");
@@ -24,9 +22,13 @@ const ChangePasswordTab = () => {
 
         if (v1 && v2) {
             axiosPrivate
-                .post("/home/changePassword", { username: auth.username, currentPassword, newPassword })
+                .post("/home/changePassword", { currentPassword, newPassword })
                 .then(() => {
                     setStatus("success");
+                    setCurrentPassword('');
+                    setNewPassword('');
+                    setMatchPassword('');
+                    setSubmitable(false);
                     setMsg("Success: Password changed");
                 })
                 .catch((err) => {

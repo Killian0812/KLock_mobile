@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
     View, Text, TouchableOpacity, ScrollView,
     StyleSheet, Dimensions, FlatList, Image, Modal
@@ -6,7 +6,6 @@ import {
 import AdIcons from 'react-native-vector-icons/AntDesign';
 import { ref, getDownloadURL } from 'firebase/storage';
 
-import useAuth from '../hooks/useAuth';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useFirebase from '../hooks/useFirebase';
 import { formatDate } from '../tools/date.formatter';
@@ -72,17 +71,16 @@ const RoomScreen = () => {
     const [rooms, setRooms] = useState([]);
     const [selectedRoom, setSelectedRoom] = useState(null);
     const [data, setData] = useState([]);
-    const { auth } = useAuth();
     const axiosPrivate = useAxiosPrivate();
     const { storage } = useFirebase();
 
     // fetch rooms
     useEffect(() => {
-        axiosPrivate.get(`/home/rooms?username=${auth.username}`).then((res) => {
+        axiosPrivate.get(`/home/rooms`).then((res) => {
             console.log(res.data);
             setRooms(res.data);
         })
-    }, [auth, axiosPrivate]);
+    }, [axiosPrivate]);
 
 
     const handleRoomPress = (room) => {

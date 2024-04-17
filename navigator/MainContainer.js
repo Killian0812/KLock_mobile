@@ -1,6 +1,9 @@
-import { StyleSheet, Text, SafeAreaView } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { useEffect } from 'react';
+import * as Notifications from 'expo-notifications';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 import useListenEvent from '../hooks/useListenEvent';
 
@@ -27,6 +30,19 @@ const styles = StyleSheet.create({
 const MainContainer = () => {
 
     useListenEvent();
+
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        // Navigate to the home screen when notification is clicked
+        const responseListener = Notifications.addNotificationResponseReceivedListener(() => {
+            navigation.navigate('Home');
+        });
+
+        return () => {
+            Notifications.removeNotificationSubscription(responseListener);
+        };
+    }, [navigation]);
 
     return (
         <Tab.Navigator styles={styles.layout} initialRouteName={'Home'} screenOptions={({ route }) => ({

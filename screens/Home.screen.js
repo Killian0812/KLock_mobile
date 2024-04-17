@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Modal } from 'react-native';
 import { formatDate } from '../tools/date.formatter';
 import { getDownloadURL, ref } from "firebase/storage";
-import useAuth from '../hooks/useAuth';
 import useFirebase from '../hooks/useFirebase';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useNotification from '../hooks/useNotification';
@@ -197,17 +196,16 @@ function NewRequest({ data, storage }) {
 export default function Home() {
     const [pendingRequests, setPendingRequests] = useState([]);
     const { newRequests, setNewRequests } = useNotification();
-    const { auth } = useAuth();
     const axiosPrivate = useAxiosPrivate();
     const { storage } = useFirebase();
 
     useEffect(() => {
         // fetch all pending requests from database
-        axiosPrivate.get(`/home/pendingRequests?username=${auth.username}`).then((res) => {
+        axiosPrivate.get(`/home/pendingRequests`).then((res) => {
             if (res.data)
                 setPendingRequests(res.data);
         })
-    }, [auth, axiosPrivate]);
+    }, [axiosPrivate]);
 
     useEffect(() => {
         // clean up

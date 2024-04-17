@@ -15,9 +15,9 @@ const ProfileTab = ({ navigation }) => {
     const { socket, setSocket } = useSocket();
     const axiosPrivate = useAxiosPrivate();
 
-    const [initialEmail] = useState(auth.email);
+    const [initialEmail, setInitialEmail] = useState(auth.email);
     const [email, setEmail] = useState(auth.email);
-    const [initialFullname] = useState(auth.fullname);
+    const [initialFullname, setInitialFullname] = useState(auth.fullname);
     const [fullname, setFullname] = useState(auth.fullname);
     const [changesMade, setChangesMade] = useState(false);
 
@@ -71,10 +71,13 @@ const ProfileTab = ({ navigation }) => {
         const v2 = FULLNAME_REGEX.test(trimmedFullname);
         setFullname(trimmedFullname);
         if (v1 && v2) {
-            axiosPrivate.post("/home/updateUserInfo", { username: auth.username, fullname, email })
+            axiosPrivate.post("/home/updateUserInfo", { fullname, email })
                 .then(() => {
                     setStatus("success");
                     setAuth({ ...auth, fullname: fullname, email: email })
+                    setInitialEmail(email);
+                    setInitialFullname(fullname);
+                    console.log(auth);
                     setMsg("Success: Information have been updated");
                 }).catch(() => {
                     setStatus("error");

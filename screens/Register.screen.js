@@ -2,26 +2,27 @@ import { TouchableOpacity, TextInput, Text, View, StyleSheet, ScrollView } from 
 import { Formik } from 'formik';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosPrivate from '../hooks/useAxios';
 
 const USERNAME_REGEX = /^[a-zA-Z0-9-_]{3,21}$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&/~._-]{6,24}$/;
 
 export default function RegisterScreen({ navigation }) {
 
     // required inputs
     const [username, setUsername] = useState('');
+    const [fullname, setFullname] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [matchPassword, setMatchPassword] = useState('');
 
     // check valid inputs (with regex)
     const [validUsername, setValidUsername] = useState(false);
+    const [validFullname, setValidFullname] = useState(false);
+    const [validEmail, setValidEmail] = useState(false);
     const [validPassword, setValidPassword] = useState(false);
     const [validMatch, setValidMatch] = useState(false);
-
-    const [usernameIcon, setUsernameIcon] = useState(false);
-
-    const [errMsg, setErrMsg] = useState('');
 
     const [success, setSuccess] = useState(false);
 
@@ -30,41 +31,42 @@ export default function RegisterScreen({ navigation }) {
     }, [username])
 
     useEffect(() => {
+        setValidEmail(EMAIL_REGEX.test(email));
+    }, [email])
+
+    useEffect(() => {
+        setValidFullname(fullname !== "");
+    }, [fullname])
+
+    useEffect(() => {
         setValidPassword(PASSWORD_REGEX.test(password));
         setValidMatch(password === matchPassword);
     }, [password, matchPassword])
 
-    useEffect(() => {
-        setUsernameIcon(validUsername);
-    }, [validUsername])
-
-    useEffect(() => {
-        setErrMsg('');
-    }, [username, password, matchPassword])
-
     const handleSubmit = async function (e) {
-        console.log(username);
-        console.log(password);
+        console.log(`${username} ${email} ${fullname} ${password}`);
         try {
-            const response = await axios.post("http://192.168.1.10:8080/register", JSON.stringify({ username, password }), {
+            const response = await axiosPrivate.post("/register",
+                JSON.stringify({ username, email, fullname, password }), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });
             console.log(response.data);
             setSuccess(true);
             setUsername('');
+            setEmail('');
             setPassword('');
             setMatchPassword('');
         } catch (error) {
             if (!error?.response) {
                 alert('No Server Response');
-                setErrMsg('No Server Response');
             } else if (error.response?.status === 409) {
-                alert('Username Taken');
-                setErrMsg('Username Taken');
+                if (error.response.data.taken === 1)
+                    alert('Email Taken');
+                else
+                    alert('Username Taken');
             } else {
                 alert('Registration Failed');
-                setErrMsg('Registration Failed')
             }
         }
     }
@@ -77,7 +79,7 @@ export default function RegisterScreen({ navigation }) {
         <>
             {success ? (
                 <View style={styles.layout} >
-                    <ScrollView contentContainerStyle={[styles.loginSection, { height: 500 }]}>
+                    <ScrollView contentContainerStyle={styles.successSection}>
                         <View style={styles.header}>
                             <Text style={styles.title}>Successfully Registered</Text>
                         </View>
@@ -94,7 +96,7 @@ export default function RegisterScreen({ navigation }) {
                 </View >
             ) : (
                 <View style={styles.layout} >
-                    <ScrollView contentContainerStyle={styles.loginSection}>
+                    <ScrollView contentContainerStyle={styles.registerSection}>
                         <View style={styles.header}>
                             <Text style={styles.title}>Register</Text>
                         </View>
@@ -113,6 +115,34 @@ export default function RegisterScreen({ navigation }) {
                                             }
                                         </Text>
                                         <TextInput style={styles.input} onChangeText={(text) => { setUsername(text) }} value={username} />
+                                    </View>
+                                    <View style={styles.email}>
+                                        <Text style={styles.label}>Email
+                                            {email ? (
+                                                <>
+                                                    {validEmail ? <Icon name="check" size={30} color="#32CD32" />
+                                                        : <Icon name="times" size={30} color="#FF0000" />
+                                                    }
+                                                </>
+                                            ) : null
+                                            }
+                                        </Text>
+                                        <TextInput style={styles.input}
+                                            onChangeText={(text) => { setEmail(text) }} value={email} />
+                                    </View>
+                                    <View style={styles.fullname}>
+                                        <Text style={styles.label}>Fullname
+                                            {fullname ? (
+                                                <>
+                                                    {validFullname ? <Icon name="check" size={30} color="#32CD32" />
+                                                        : <Icon name="times" size={30} color="#FF0000" />
+                                                    }
+                                                </>
+                                            ) : null
+                                            }
+                                        </Text>
+                                        <TextInput style={styles.input}
+                                            onChangeText={(text) => { setFullname(text) }} value={fullname} />
                                     </View>
                                     <View style={styles.password}>
                                         <Text style={styles.label}>Password
@@ -172,14 +202,23 @@ const styles = StyleSheet.create({
         backgroundColor: "#222222",
         fontFamily: "Quicksand-Regular",
     },
-    loginSection: {
+    successSection: {
         width: 350,
-        height: 600,
+        height: 500,
         borderRadius: 20,
         backgroundColor: "#141414",
         justifyContent: "center",
         alignItems: "center",
-        top: 160
+        top: 200
+    },
+    registerSection: {
+        width: 350,
+        height: 750,
+        borderRadius: 20,
+        backgroundColor: "#141414",
+        justifyContent: "center",
+        alignItems: "center",
+        top: 80
     },
     header: {
         position: "absolute",
@@ -203,7 +242,7 @@ const styles = StyleSheet.create({
     },
     input: {
         marginTop: 35,
-        height: 50,
+        height: 40,
         width: 300,
         margin: 12,
         fontSize: 20,
@@ -211,19 +250,27 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 5,
         backgroundColor: "#FFFFFF",
-        padding: 10,
+        paddingLeft: 10,
+    },
+    email: {
+        position: "absolute",
+        top: 200,
+    },
+    fullname: {
+        position: "absolute",
+        top: 290,
     },
     password: {
         position: "absolute",
-        top: 210,
+        top: 380,
     },
     confirmPassword: {
         position: "absolute",
-        top: 310,
+        top: 470,
     },
     signin: {
         position: "absolute",
-        top: 430,
+        top: 580,
         width: 230,
         height: 50,
         backgroundColor: "#BFBFBF",
@@ -241,6 +288,6 @@ const styles = StyleSheet.create({
     signup: {
         width: 300,
         position: "absolute",
-        top: 510
+        top: 650
     }
 });
