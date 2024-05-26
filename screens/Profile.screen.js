@@ -3,6 +3,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 import { useState } from 'react';
 
 import ProfileTab from './tabs/Profile.tab';
+import RoomRegisterTab from './tabs/RoomRegister.tab';
 import ChangePasswordTab from './tabs/ChangePassword.tab';
 
 export default function ProfileScreen({ navigation }) {
@@ -33,7 +34,7 @@ export default function ProfileScreen({ navigation }) {
                 </View>
                 <View style={styles.tabContent}>
                     {activeTab === "profileTab" && <ProfileTab navigation={navigation}></ProfileTab>}
-                    {/* {activeTab === "roomRegisterTab" && <RoomRegisterTab />} */}
+                    {activeTab === "roomRegisterTab" && <RoomRegisterTab />}
                     {activeTab === "changePasswordTab" && <ChangePasswordTab />}
                 </View>
             </View>
@@ -55,6 +56,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#4f4f4f',
     },
     tabContent: {
+        display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         backgroundColor: '#4f4f4f',

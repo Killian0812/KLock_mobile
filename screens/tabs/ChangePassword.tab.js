@@ -22,7 +22,7 @@ const ChangePasswordTab = () => {
 
         if (v1 && v2) {
             axiosPrivate
-                .post("/home/changePassword", { currentPassword, newPassword })
+                .post("/api/home/changePassword", { currentPassword, newPassword })
                 .then(() => {
                     setStatus("success");
                     setCurrentPassword('');

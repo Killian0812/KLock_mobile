@@ -9,14 +9,12 @@ const useRefreshToken = () => {
         console.log("Getting new access token");
         const jwt = await SecureStore.getItemAsync("REFRESH_TOKEN");
         if (!jwt)
-            return "NO JWT";
+            return null;
 
-        const cookies = `jwt=${jwt}; isMobile=true;`;
         const headers = {
             'Content-Type': 'application/json',
-            'Cookie': cookies,   
         }
-        const response = await axiosPrivate.get("/refresh", {
+        const response = await axiosPrivate.get("/api/refresh", {
             headers: headers,
             timeout: 5000
         });

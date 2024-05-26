@@ -35,7 +35,7 @@ export default function PersistLogin({ navigation }) {
             // => when there is a new entry, send a notification to all managers
             console.log("Expo PT: " + expoPushToken);
 
-            axiosPrivate.post(`/home/updateExpoPushToken/${auth?.username}`, { expoPushToken: expoPushToken })
+            axiosPrivate.post(`/api/home/updateExpoPushToken/${auth?.username}`, { expoPushToken: expoPushToken })
                 .then(() => { console.log("Updated expo push token") })
                 .catch(e => console.log(e));
                 

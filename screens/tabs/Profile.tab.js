@@ -31,7 +31,7 @@ const ProfileTab = ({ navigation }) => {
             // await SecureStore.deleteItemAsync("USERNAME");
             // await SecureStore.deleteItemAsync("ACCESS_TOKEN");
             if (refreshToken)
-                await axiosPrivate.post('/logout/mobile', ({ refreshToken: refreshToken }));
+                await axiosPrivate.post('/api/logout/mobile', ({ refreshToken: refreshToken }));
             socket.close();
             setSocket(null);
             navigation.navigate("Login");
@@ -71,7 +71,7 @@ const ProfileTab = ({ navigation }) => {
         const v2 = FULLNAME_REGEX.test(trimmedFullname);
         setFullname(trimmedFullname);
         if (v1 && v2) {
-            axiosPrivate.post("/home/updateUserInfo", { fullname, email })
+            axiosPrivate.post("/api/home/updateUserInfo", { fullname, email })
                 .then(() => {
                     setStatus("success");
                     setAuth({ ...auth, fullname: fullname, email: email })

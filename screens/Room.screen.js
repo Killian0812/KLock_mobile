@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-    View, Text, TouchableOpacity, ScrollView,
+    View, Text, TouchableOpacity, ScrollView, Alert,
     StyleSheet, Dimensions, FlatList, Image, Modal
 } from 'react-native';
 import AdIcons from 'react-native-vector-icons/AntDesign';
@@ -76,7 +76,7 @@ const RoomScreen = () => {
 
     // fetch rooms
     useEffect(() => {
-        axiosPrivate.get(`/home/rooms`).then((res) => {
+        axiosPrivate.get(`/api/home/rooms`).then((res) => {
             console.log(res.data);
             setRooms(res.data);
         })
@@ -92,13 +92,42 @@ const RoomScreen = () => {
 
         // fetch room entries
         async function fetchRoomEntries() {
-            const allEntries = await axiosPrivate.get(`/home/roomEntries?mac=${room.mac}`);
+            const allEntries = await axiosPrivate.get(`/api/home/roomEntries?mac=${room.mac}`);
             setData(allEntries.data.reverse());
         }
         fetchRoomEntries();
 
         setSelectedRoom(room);
     };
+
+    const handleRoomUnregister = async (room) => {
+        Alert.alert(
+            'Unregister as manager?',
+            `You will no longer be able to recieve notification from ${room.name} or access its entry history.`,
+            [
+                {
+                    text: 'Yes, confirm action',
+                    onPress: () => {
+                        axiosPrivate.post(`/api/home/roomUnregister`, { roomId: room._id })
+                            .then(() => {
+                                axiosPrivate.get(`/api/home/rooms`).then((res) => {
+                                    setRooms(res.data);
+                                })
+                                alert(`You are no longer ${room.name}'s manager`);
+                            })
+                            .catch((err) => {
+                                alert('Unexpected error');
+                                console.log("Error unregistering as manager:", err);
+                            })
+                    }
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel'
+                }
+            ]
+        );
+    }
 
     const handleClose = () => {
         setData(null);
@@ -123,6 +152,7 @@ const RoomScreen = () => {
                             selectedRoom === room ? styles.selectedRoom : null,
                         ]}
                         onPress={() => handleRoomPress(room)}
+                        onLongPress={() => handleRoomUnregister(room)}
                     >
                         <Text style={styles.roomButtonText}>{room.name}</Text>
                     </TouchableOpacity>

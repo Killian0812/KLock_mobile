@@ -4,7 +4,7 @@ import axios from "axios";
 // const accessToken = SecureStore.getItem("ACCESS_TOKEN");
 
 const axiosPrivate = axios.create({
-    baseURL: 'http://192.168.1.15:8080'
+    baseURL: 'http://13.237.151.178'
 });
 
 export default axiosPrivate;

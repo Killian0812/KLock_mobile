@@ -45,13 +45,14 @@ export const PushNotificationProvider = ({ children }) => {
                 }
                 if (finalStatus !== 'granted') {
                     alert('Failed to get push token for push notification!');
-                    return;
+                    return null;
                 }
                 token = await Notifications.getExpoPushTokenAsync({
                     projectId: Constants.expoConfig.extra.eas.projectId,
                 });
             } else {
                 alert('Must use physical device for Push Notifications');
+                return null;
             }
 
             return token.data;

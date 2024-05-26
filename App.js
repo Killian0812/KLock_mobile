@@ -15,18 +15,19 @@ import RegisterScreen from "./screens/Register.screen";
 import SplashScreen from "./screens/Splash.screen";
 import Authenticate from './navigator/Authenticate';
 import { NotificationProvider } from "./context/NotificationProvider";
-
+import { View, Image, Text } from "react-native";
 
 const Stack = createStackNavigator();
 
 function App() {
 
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, error] = useFonts({
     "Quicksand-Regular": require("./assets/fonts/Quicksand-Regular.ttf"),
     "Quicksand-Bold": require("./assets/fonts/Quicksand-Bold.ttf"),
   });
 
   if (!fontsLoaded) {
+    console.log(error);
     return (
       <SplashScreen></SplashScreen>
     )
@@ -52,7 +53,7 @@ function App() {
                   </Stack.Navigator>
 
                 </NavigationContainer>
-      
+
               </NotificationProvider>
             </SocketProvider>
           </AuthProvider>

@@ -46,7 +46,7 @@ export default function RegisterScreen({ navigation }) {
     const handleSubmit = async function (e) {
         console.log(`${username} ${email} ${fullname} ${password}`);
         try {
-            const response = await axiosPrivate.post("/register",
+            const response = await axiosPrivate.post("/api/register",
                 JSON.stringify({ username, email, fullname, password }), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true

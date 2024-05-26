@@ -16,7 +16,7 @@ export default function LoginScreen({ navigation }) {
         console.log(username);
         console.log(password);
         try {
-            const response = await axiosPrivate.post("/login/mobile", JSON.stringify({ username, password }), {
+            const response = await axiosPrivate.post("/api/login/mobile", JSON.stringify({ username, password }), {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
             });

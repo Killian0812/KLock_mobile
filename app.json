@@ -38,7 +38,10 @@
         {
           "faceIDPermission": "Allow KLock Mobile to access your Face ID biometric data."
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-font",
+      "expo-router"
     ],
     "extra": {
       "eas": {
